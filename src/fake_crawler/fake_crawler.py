@@ -1,9 +1,12 @@
 from datetime import datetime
 from kafka import KafkaProducer
 import time
+import random
 
 _BOOTSTRAP_IP = "10.12.168.74"
 _BOOTSTRAP_PORT = "9092"
+
+FOOD_LIST = ["burger", "pizza", "kookbab", "kimbab", "pasta"]
 
 def main():
 
@@ -14,9 +17,13 @@ def main():
     topic = "food"
 
     while True:
-        now = str(datetime.now())
-        producer.send(topic, now.encode())
-        print(now)
+        food = random.choice(FOOD_LIST)
+        data = {
+            'timestamp': str(datetime.now()),
+            'category': category
+        }
+        message = json.dumps(data).encode()
+        producer.send(topic, message)
         time.sleep(10)
 
 if __name__ == "__main__":
