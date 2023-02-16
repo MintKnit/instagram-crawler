@@ -1,6 +1,7 @@
 from datetime import datetime
 from kafka import KafkaProducer
 import time
+import json
 import random
 
 _BOOTSTRAP_IP = "10.12.168.74"
@@ -17,10 +18,17 @@ def main():
     topic = "food"
 
     while True:
-        food = random.choice(FOOD_LIST)
+        category = random.choice(FOOD_LIST)
         data = {
-            'timestamp': str(datetime.now()),
-            'category': category
+            "schema":
+                {
+                    "type": "struct",
+                    "fields":
+                        [
+                            {"type":"string","optional": False, "field":"timestamp"}, {"type":"string","optional":False, "field":"category"}
+                        ],
+                    "optional": False,"name":"foods"},
+                    "payload":{"timestamp":str(datetime.now()).replace("-", ""),"category": category}
         }
         message = json.dumps(data).encode()
         producer.send(topic, message)
